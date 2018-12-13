@@ -49,9 +49,7 @@ class EmployerName extends Component {
             valueKey,
             labelKey,
         } = this.props;
-        const {
-            isOpen,
-        } = this.state;
+        const { isOpen } = this.state;
 
         return (
             <div id="employer-name">
