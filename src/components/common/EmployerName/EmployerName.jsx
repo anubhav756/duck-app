@@ -73,13 +73,7 @@ class EmployerName extends Component {
 }
 
 EmployerName.propTypes = {
-    value      : PropTypes.shape({
-        value  : PropTypes.oneOfType([
-            PropTypes.string,
-            PropTypes.number,
-        ]).isRequired,
-        label  : PropTypes.string.isRequired,
-    }).isRequired,
+    value      : PropTypes.object.isRequired,
     options    : PropTypes.array.isRequired,
     onChange   : PropTypes.func.isRequired,
     onSelect   : PropTypes.func.isRequired,
