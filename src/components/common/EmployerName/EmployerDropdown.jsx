@@ -8,7 +8,7 @@ const EmployerDropdown = ({
     isFetching,
     valueKey,
     labelKey,
-}) => isOpen && options.length ? (
+}) => isOpen && (options.length || isFetching) ? (
     <div className="dropdown">
         {
             isFetching ?
