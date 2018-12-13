@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Form from './components/common/Form';
 import EmployerName from './components/common/EmployerName';
 
 class App extends Component {
@@ -53,7 +54,7 @@ class App extends Component {
         } = this.state;
 
         return (
-            <div>
+            <Form>
                 <EmployerName
                     value={employer}
                     options={options}
@@ -66,7 +67,7 @@ class App extends Component {
                 <button onClick={this.handleSubmit}>Submit</button>
                 <br />
                 {isSubmitted && `Submitted: ${JSON.stringify(employer)}`}
-            </div>
+            </Form>
         );
     }
 }

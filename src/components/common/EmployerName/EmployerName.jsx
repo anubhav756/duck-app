@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import EmployerDropdown from './EmployerDropdown';
+import { FormContext } from '../Form';
 import './EmployerName.css';
 
 const filterOptions = (value, options, key) =>
@@ -52,22 +53,30 @@ class EmployerName extends Component {
         const { isOpen } = this.state;
 
         return (
-            <div id="employer-name">
-                Employer Name<br />
-                <input
-                    className="input"
-                    value={value[labelKey]}
-                    onChange={e => onChange(e.target.value)}
-                />
-                <EmployerDropdown
-                    options={filterOptions(value, options, labelKey)}
-                    onSelect={this.handleSelect}
-                    isOpen={isOpen}
-                    isFetching={isFetching}
-                    valueKey={valueKey}
-                    labelKey={labelKey}
-                />
-            </div>
+            <FormContext.Consumer>
+                {({
+                    formContext,
+                    updateContext,
+                }) => (
+                    <div id="employer-name">
+                    Employer Name<br />
+                    <input
+                        className="input"
+                        value={value[labelKey]}
+                        onChange={e => onChange(e.target.value)}
+                    />
+                    <EmployerDropdown
+                        options={filterOptions(value, options, labelKey)}
+                        onSelect={this.handleSelect}
+                        isOpen={isOpen}
+                        isFetching={isFetching}
+                        valueKey={valueKey}
+                        labelKey={labelKey}
+                    />
+                    </div>
+                )}
+            </FormContext.Consumer>
+
         );
     }
 }
