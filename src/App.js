@@ -7,11 +7,6 @@ class App extends Component {
         super();
 
         this.state = {
-            employer: {
-                value: -1,
-                label: '',
-            },
-            isFetching: false,
             options: [{
                 value: 1,
                 label: 'Google',
@@ -22,51 +17,32 @@ class App extends Component {
                 value: 3,
                 label: 'Gooo',
             }],
+            submittedValues: null,
         };
 
-        this.handleEmployerChange = this.handleEmployerChange.bind(this);
-        this.handleEmployerSelect = this.handleEmployerSelect.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
-    handleEmployerChange(employerName) {
-        this.setState({
-            employer: {
-                value: -1,
-                label: employerName
-            },
-            isSubmitted: false,
-        });
-        this.setState({ isFetching: true });
-        setTimeout(() => this.setState({ isFetching: false }), 1000);
-    }
-    handleEmployerSelect(employer) {
-        this.setState({ employer });
-    }
-    handleSubmit() {
-        this.setState({ isSubmitted: true });
+    handleSubmit(submittedValues) {
+        this.setState({ submittedValues });
     }
     render() {
         const {
-            employer,
             isFetching,
             options,
-            isSubmitted,
+            submittedValues,
         } = this.state;
 
         return (
-            <Form>
+            <Form onSubmit={this.handleSubmit}>
                 <EmployerName
-                    value={employer}
                     options={options}
                     isFetching={isFetching}
-                    onChange={this.handleEmployerChange}
-                    onSelect={this.handleEmployerSelect}
                     isOpen
                 />
                 <br />
-                <button onClick={this.handleSubmit}>Submit</button>
+                <button type="submit">Submit</button>
                 <br />
-                {isSubmitted && `Submitted: ${JSON.stringify(employer)}`}
+                {submittedValues && JSON.stringify(submittedValues)}
             </Form>
         );
     }

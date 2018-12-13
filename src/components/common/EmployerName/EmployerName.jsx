@@ -8,7 +8,7 @@ const filterOptions = (value, options, key) =>
     options.filter(o =>
         o[key]
             .toLowerCase()
-            .indexOf(value[key].toLowerCase()) === 0
+            .indexOf(value[key].toLowerCase()) !== -1
     );
 
 class EmployerName extends Component {
@@ -95,19 +95,16 @@ class EmployerName extends Component {
 EmployerName.contextType = FormContext;
 
 EmployerName.propTypes = {
-    value      : PropTypes.object.isRequired,
     options    : PropTypes.array.isRequired,
-    onChange   : PropTypes.func.isRequired,
-    onSelect   : PropTypes.func.isRequired,
     isFetching : PropTypes.bool,
     valueKey   : PropTypes.string,
     labelKey   : PropTypes.string,
 };
 
 EmployerName.defaultProps = {
+    isFetching : false,
     valueKey   : 'value',
     labelKey   : 'label',
-    isFetching : false,
 };
 
 export default EmployerName;

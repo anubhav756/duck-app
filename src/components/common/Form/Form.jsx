@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { FormContext } from './index';
 
 const initialContext = {
@@ -17,6 +18,7 @@ class Form extends Component {
         };
 
         this.updateContext = this.updateContext.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
     componentWillMount() {
         this.setState({
@@ -34,6 +36,13 @@ class Form extends Component {
             },
         });
     }
+    handleSubmit(e) {
+        const { onSubmit } = this.props;
+        const { formContext } = this.state;
+
+        e.preventDefault();
+        onSubmit(formContext);
+    }
     render() {
         const { children } = this.props;
         const {
@@ -46,12 +55,16 @@ class Form extends Component {
                 formContext,
                 updateContext,
             }}>
-                <form>
+                <form onSubmit={this.handleSubmit}>
                     {children}
                 </form>
             </FormContext.Provider>
         );
     }
+}
+
+Form.propTypes = {
+    onSubmit: PropTypes.func.isRequired,
 }
 
 export default Form;
