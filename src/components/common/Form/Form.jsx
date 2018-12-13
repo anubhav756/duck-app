@@ -4,8 +4,8 @@ import { FormContext } from './index';
 
 const initialContext = {
     employer: {
-        value: -1,
-        label: '',
+        value : -1,
+        label : '',
     },
 };
 

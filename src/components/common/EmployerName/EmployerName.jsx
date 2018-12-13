@@ -16,7 +16,9 @@ class EmployerName extends Component {
         super();
 
         this.state = {
-            isOpen: false,
+            options    : [],
+            isOpen     : false,
+            isFetching : false
         };
 
         this.clickListener = this.clickListener.bind(this);
@@ -42,14 +44,22 @@ class EmployerName extends Component {
         this.setState({ isOpen });
     }
     handleChange(e) {
+        const { fetchEmployers } = this.props;
         const { updateContext } = this.context;
+        const { value } = e.target;
 
         updateContext({
             employer: {
                 value: -1,
-                label: e.target.value,
+                label: value,
             },
-        })
+        });
+        this.setState({ isFetching: true });
+        fetchEmployers(value)
+            .then(options => this.setState({
+                options,
+                isFetching: false,
+            }));
     }
     handleSelect(employer) {
         const { updateContext } = this.context;
@@ -59,12 +69,14 @@ class EmployerName extends Component {
     }
     render() {
         const {
-            options,
-            isFetching,
             valueKey,
             labelKey,
         } = this.props;
-        const { isOpen } = this.state;
+        const {
+            options,
+            isOpen,
+            isFetching,
+        } = this.state;
         const {
             formContext: {
                 employer,
@@ -95,16 +107,14 @@ class EmployerName extends Component {
 EmployerName.contextType = FormContext;
 
 EmployerName.propTypes = {
-    options    : PropTypes.array.isRequired,
-    isFetching : PropTypes.bool,
-    valueKey   : PropTypes.string,
-    labelKey   : PropTypes.string,
+    fetchEmployers : PropTypes.func.isRequired,
+    valueKey       : PropTypes.string,
+    labelKey       : PropTypes.string,
 };
 
 EmployerName.defaultProps = {
-    isFetching : false,
-    valueKey   : 'value',
-    labelKey   : 'label',
+    valueKey : 'value',
+    labelKey : 'label',
 };
 
 export default EmployerName;
