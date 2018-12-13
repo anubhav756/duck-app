@@ -19,67 +19,80 @@ class EmployerName extends Component {
             isOpen: false,
         };
 
+        this.clickListener = this.clickListener.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
     }
     componentDidMount() {
+        document.addEventListener('click', this.clickListener);
+    }
+    componentWillUnmount() {
+        document.removeEventListener('click', this.clickListener);
+    }
+    clickListener(e) {
         const currentElement = document.getElementById('employer-name');
 
-        document.addEventListener('click', (event) => {
-            if (!currentElement.contains(event.target)) {
-                this.toggleDropdown(false);
-            } else {
-                this.toggleDropdown(true);
-            }
-          });
+        if (!currentElement.contains(e.target)) {
+            this.toggleDropdown(false);
+        } else {
+            this.toggleDropdown(true);
+        }
     }
     toggleDropdown(isOpen) {
         this.setState({ isOpen });
     }
-    handleSelect(option) {
-        const { onSelect } = this.props;
+    handleChange(e) {
+        const { updateContext } = this.context;
 
-        onSelect(option);
+        updateContext({
+            employer: {
+                value: -1,
+                label: e.target.value,
+            },
+        })
+    }
+    handleSelect(employer) {
+        const { updateContext } = this.context;
+
+        updateContext({ employer });
         this.toggleDropdown(false);
     }
     render() {
         const {
-            value,
             options,
-            onChange,
             isFetching,
             valueKey,
             labelKey,
         } = this.props;
         const { isOpen } = this.state;
+        const {
+            formContext: {
+                employer,
+            },
+        } = this.context;
 
         return (
-            <FormContext.Consumer>
-                {({
-                    formContext,
-                    updateContext,
-                }) => (
-                    <div id="employer-name">
-                    Employer Name<br />
-                    <input
-                        className="input"
-                        value={value[labelKey]}
-                        onChange={e => onChange(e.target.value)}
-                    />
-                    <EmployerDropdown
-                        options={filterOptions(value, options, labelKey)}
-                        onSelect={this.handleSelect}
-                        isOpen={isOpen}
-                        isFetching={isFetching}
-                        valueKey={valueKey}
-                        labelKey={labelKey}
-                    />
-                    </div>
-                )}
-            </FormContext.Consumer>
-
+            <div id="employer-name">
+                Employer Name<br />
+                <input
+                    className="input"
+                    value={employer[labelKey]}
+                    onChange={this.handleChange}
+                />
+                <EmployerDropdown
+                    options={filterOptions(employer, options, labelKey)}
+                    onSelect={this.handleSelect}
+                    isOpen={isOpen}
+                    isFetching={isFetching}
+                    valueKey={valueKey}
+                    labelKey={labelKey}
+                />
+            </div>
         );
     }
 }
+
+EmployerName.contextType = FormContext;
 
 EmployerName.propTypes = {
     value      : PropTypes.object.isRequired,
