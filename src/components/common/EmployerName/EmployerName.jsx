@@ -44,14 +44,19 @@ class EmployerName extends Component {
         this.setState({ isOpen });
     }
     handleChange(e) {
-        const { fetchEmployers } = this.props;
+        const {
+            fetchEmployers,
+            emptyValue,
+            valueKey,
+            labelKey,
+        } = this.props;
         const { updateContext } = this.context;
         const { value } = e.target;
 
         updateContext({
             employer: {
-                value: -1,
-                label: value,
+                [valueKey] : emptyValue(value),
+                [labelKey] : value,
             },
         });
         this.setState({ isFetching: true });
@@ -108,13 +113,15 @@ EmployerName.contextType = FormContext;
 
 EmployerName.propTypes = {
     fetchEmployers : PropTypes.func.isRequired,
+    emptyValue     : PropTypes.func,
     valueKey       : PropTypes.string,
     labelKey       : PropTypes.string,
 };
 
 EmployerName.defaultProps = {
-    valueKey : 'value',
-    labelKey : 'label',
+    emptyValue : () => -1,
+    valueKey   : 'value',
+    labelKey   : 'label',
 };
 
 export default EmployerName;
