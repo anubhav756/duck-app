@@ -53,13 +53,13 @@ class EmployerName extends Component {
         const { updateContext } = this.context;
         const { value } = e.target;
 
+        this.setState({ isFetching: true });
         updateContext({
             employer: {
                 [valueKey] : emptyValue(value),
                 [labelKey] : value,
             },
         });
-        this.setState({ isFetching: true });
         fetchEmployers(value)
             .then(options => this.setState({
                 options,
