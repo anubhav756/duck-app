@@ -9,15 +9,19 @@ class App extends Component {
 
         this.state = {
             submittedValues : null,
+            submittedErrors : null,
         };
 
         this.handleSubmit = this.handleSubmit.bind(this);
     }
-    handleSubmit(submittedValues) {
-        this.setState({ submittedValues });
+    handleSubmit(submittedValues, submittedErrors) {
+        this.setState({ submittedValues, submittedErrors });
     }
     render() {
-        const { submittedValues } = this.state;
+        const {
+            submittedValues,
+            submittedErrors,
+        } = this.state;
 
         return (
             <Form onSubmit={this.handleSubmit}>
@@ -25,7 +29,9 @@ class App extends Component {
                 <br />
                 <button type="submit">Submit</button>
                 <br />
-                {submittedValues && JSON.stringify(submittedValues)}
+                {submittedValues && `values: ${JSON.stringify(submittedValues)}`}
+                <br />
+                {submittedErrors && `errors: ${JSON.stringify(submittedErrors)}`}
             </Form>
         );
     }

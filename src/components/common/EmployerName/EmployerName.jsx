@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import EmployerDropdown from './EmployerDropdown';
 import { FormContext } from '../Form';
+import { requireEmployer } from '../../../api/validations';
 import './EmployerName.css';
 
 const filterOptions = (value, options, key) =>
@@ -24,6 +25,12 @@ class EmployerName extends Component {
         this.clickListener = this.clickListener.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
+        this.updateValue = this.updateValue.bind(this);
+    }
+    componentWillMount() {
+        const { initialValue } = this.props;
+
+        this.updateValue(initialValue);
     }
     componentDidMount() {
         document.addEventListener('click', this.clickListener);
@@ -50,15 +57,12 @@ class EmployerName extends Component {
             valueKey,
             labelKey,
         } = this.props;
-        const { updateContext } = this.context;
         const { value } = e.target;
 
         this.setState({ isFetching: true });
-        updateContext({
-            employer: {
-                [valueKey] : emptyValue(value),
-                [labelKey] : value,
-            },
+        this.updateValue({
+            [valueKey] : emptyValue(value),
+            [labelKey] : value,
         });
         fetchEmployers(value)
             .then(options => this.setState({
@@ -67,14 +71,18 @@ class EmployerName extends Component {
             }));
     }
     handleSelect(employer) {
-        const { updateContext } = this.context;
-
-        updateContext({ employer });
+        this.updateValue(employer);
         this.toggleDropdown(false);
+    }
+    updateValue(newValue) {
+        const { updateValue } = this.context;
+        const validations = [requireEmployer];
+
+        updateValue('employer', newValue, validations)
     }
     render() {
         const {
-            emptyValue,
+            initialValue,
             valueKey,
             labelKey,
         } = this.props;
@@ -83,13 +91,8 @@ class EmployerName extends Component {
             isOpen,
             isFetching,
         } = this.state;
-        const { formContext } = this.context;
-        const {
-            employer = {
-                value: emptyValue(),
-                label: ''
-            }
-        } = formContext;
+        const { formValues } = this.context;
+        const { employer = initialValue } = formValues;
 
         return (
             <div id="employer-name">
@@ -116,15 +119,17 @@ EmployerName.contextType = FormContext;
 
 EmployerName.propTypes = {
     fetchEmployers : PropTypes.func.isRequired,
+    initialValue   : PropTypes.object,
     emptyValue     : PropTypes.func,
     valueKey       : PropTypes.string,
     labelKey       : PropTypes.string,
 };
 
 EmployerName.defaultProps = {
-    emptyValue : () => -1,
-    valueKey   : 'value',
-    labelKey   : 'label',
+    initialValue : { value: -1, label: '' },
+    emptyValue   : () => -1,
+    valueKey     : 'value',
+    labelKey     : 'label',
 };
 
 export default EmployerName;

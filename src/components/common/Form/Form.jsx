@@ -2,45 +2,59 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormContext } from './index';
 
-const initialContext = {};
+const initialValues = {};
 
 class Form extends Component {
     constructor() {
         super();
 
         this.state = {
-            formContext: initialContext,
+            formValues: initialValues,
+            formErrors: {},
         };
 
-        this.updateContext = this.updateContext.bind(this);
+        this.updateValue = this.updateValue.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
-    updateContext(newContext) {
-        const { formContext } = this.state;
+    updateValue(fieldName, newContext, validations = []) {
+        const {
+            formValues,
+            formErrors,
+        } = this.state;
 
         this.setState({
             ...this.state,
-            formContext: {
-                ...formContext,
-                ...newContext,
+            formValues: {
+                ...formValues,
+                [fieldName]: newContext,
+            },
+            formErrors: {
+                ...formErrors,
+                [fieldName]: validations.reduce(
+                    (error, validator) => error || validator(newContext),
+                    null,
+                ),
             },
         });
     }
     handleSubmit(e) {
         const { onSubmit } = this.props;
-        const { formContext } = this.state;
+        const {
+            formValues,
+            formErrors,
+        } = this.state;
 
         e.preventDefault();
-        onSubmit(formContext);
+        onSubmit(formValues, formErrors);
     }
     render() {
         const { children } = this.props;
-        const { formContext } = this.state;
+        const { formValues } = this.state;
 
         return (
             <FormContext.Provider value={{
-                formContext,
-                updateContext: this.updateContext,
+                formValues,
+                updateValue: this.updateValue,
             }}>
                 <form onSubmit={this.handleSubmit}>
                     {children}
