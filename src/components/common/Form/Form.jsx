@@ -20,11 +20,6 @@ class Form extends Component {
         this.updateContext = this.updateContext.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
-    componentWillMount() {
-        this.setState({
-            updateContext: this.updateContext,
-        });
-    }
     updateContext(newContext) {
         const { formContext } = this.state;
 
@@ -45,15 +40,12 @@ class Form extends Component {
     }
     render() {
         const { children } = this.props;
-        const {
-            formContext,
-            updateContext,
-        } = this.state;
+        const { formContext } = this.state;
 
         return (
             <FormContext.Provider value={{
                 formContext,
-                updateContext,
+                updateContext: this.updateContext,
             }}>
                 <form onSubmit={this.handleSubmit}>
                     {children}
