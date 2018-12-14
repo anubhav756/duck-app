@@ -1,1 +1,2 @@
-export const requireEmployer = employer => employer.value === -1 && 'Employer required';
+export const requireEmployer = employer =>
+    !employer.label ? 'Employer required' : null;

@@ -28,15 +28,22 @@ class EmployerName extends Component {
         this.updateValue = this.updateValue.bind(this);
     }
     componentWillMount() {
-        const { initialValue } = this.props;
-
-        this.updateValue(initialValue);
+        this.updateValue(this.getInitialValue());
     }
     componentDidMount() {
         document.addEventListener('click', this.clickListener);
     }
     componentWillUnmount() {
         document.removeEventListener('click', this.clickListener);
+    }
+    getInitialValue() {
+        const {
+            keywordToValue,
+            valueKey,
+            labelKey,
+        } = this.props;
+
+        return keywordToValue('', valueKey, labelKey);
     }
     clickListener(e) {
         const currentElement = document.getElementById('employer-name');
@@ -51,20 +58,17 @@ class EmployerName extends Component {
         this.setState({ isOpen });
     }
     handleChange(e) {
+        const keyword = e.target.value;
         const {
             fetchEmployers,
-            emptyValue,
+            keywordToValue,
             valueKey,
             labelKey,
         } = this.props;
-        const { value } = e.target;
 
         this.setState({ isFetching: true });
-        this.updateValue({
-            [valueKey] : emptyValue(value),
-            [labelKey] : value,
-        });
-        fetchEmployers(value)
+        this.updateValue(keywordToValue(keyword, valueKey, labelKey));
+        fetchEmployers(keyword)
             .then(options => this.setState({
                 options,
                 isFetching: false,
@@ -82,7 +86,6 @@ class EmployerName extends Component {
     }
     render() {
         const {
-            initialValue,
             valueKey,
             labelKey,
         } = this.props;
@@ -92,13 +95,14 @@ class EmployerName extends Component {
             isFetching,
         } = this.state;
         const { formValues } = this.context;
-        const { employer = initialValue } = formValues;
+        const { employer = this.getInitialValue() } = formValues;
 
         return (
             <div id="employer-name">
                 Employer Name<br />
                 <input
                     className="input"
+                    placeholder="Search for employers"
                     value={employer[labelKey]}
                     onChange={this.handleChange}
                 />
@@ -119,17 +123,18 @@ EmployerName.contextType = FormContext;
 
 EmployerName.propTypes = {
     fetchEmployers : PropTypes.func.isRequired,
-    initialValue   : PropTypes.object,
-    emptyValue     : PropTypes.func,
+    keywordToValue : PropTypes.func,
     valueKey       : PropTypes.string,
     labelKey       : PropTypes.string,
 };
 
 EmployerName.defaultProps = {
-    initialValue : { value: -1, label: '' },
-    emptyValue   : () => -1,
-    valueKey     : 'value',
-    labelKey     : 'label',
+    keywordToValue : (keyword, valueKey, labelKey) => ({
+        [valueKey] : -1,
+        [labelKey] : keyword,
+    }),
+    valueKey       : 'value',
+    labelKey       : 'label',
 };
 
 export default EmployerName;
