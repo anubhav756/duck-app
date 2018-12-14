@@ -74,6 +74,7 @@ class EmployerName extends Component {
     }
     render() {
         const {
+            emptyValue,
             valueKey,
             labelKey,
         } = this.props;
@@ -82,11 +83,13 @@ class EmployerName extends Component {
             isOpen,
             isFetching,
         } = this.state;
+        const { formContext } = this.context;
         const {
-            formContext: {
-                employer,
-            },
-        } = this.context;
+            employer = {
+                value: emptyValue(),
+                label: ''
+            }
+        } = formContext;
 
         return (
             <div id="employer-name">

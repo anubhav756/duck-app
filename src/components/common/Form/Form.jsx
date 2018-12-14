@@ -2,12 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormContext } from './index';
 
-const initialContext = {
-    employer: {
-        value : -1,
-        label : '',
-    },
-};
+const initialContext = {};
 
 class Form extends Component {
     constructor() {
