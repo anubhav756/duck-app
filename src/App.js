@@ -1,38 +1,92 @@
 import React, { Component } from 'react';
-import { fetchEmployers } from './api/employers';
-import Form from './components/common/Form';
-import EmployerName from './components/common/EmployerName';
+import PBInput from './components/PBInput';
+import inputFields from './api/inputFields';
+
+
+const validate = (name, value) => inputFields
+    .find(field => field.name === name)
+    .validate
+    .reduce(
+        (isError, validator) => isError || validator(value),
+        false,
+    );
 
 class App extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
+        /**
+         * formField: {
+         *     fieldName: {
+         *         value,
+         *         error,
+         *         touched,
+         *     },
+         * 
+         *     ...
+         * }
+         */
         this.state = {
-            submittedValues : null,
-            submittedErrors : null,
+            formFields: {},
         };
 
+        this.handleChange = this.handleChange.bind(this);
+        this.handleBlur = this.handleBlur.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
-    handleSubmit(submittedValues, submittedErrors) {
-        this.setState({ submittedValues, submittedErrors });
+    handleChange(name, value) {
+        this.setState(({ formFields }) => ({
+            formFields: {
+                ...formFields,
+                [name]: {
+                    value,
+                    error: validate(name, value),
+                },
+            }
+        }));
+    }
+    handleBlur(name) {
+        this.setState(({ formFields }) => ({
+            formFields: {
+                ...formFields,
+                [name]: {
+                    ...formFields[name],
+                    touched: true,
+                },
+            },
+        }));
+    }
+    handleSubmit() {
+        const { formFields } = this.state;
+
+        Object.keys(formFields).forEach(fieldName => this.setState(state => ({
+            formFields: {
+                ...state.formFields,
+                [fieldName]: {
+                    ...state.formFields[fieldName],
+                    touched: true,
+                },
+            },
+        })));
     }
     render() {
-        const {
-            submittedValues,
-            submittedErrors,
-        } = this.state;
+        const { formFields } = this.state;
 
         return (
-            <Form onSubmit={this.handleSubmit}>
-                <EmployerName fetchEmployers={fetchEmployers} />
-                <br />
-                <button type="submit">Submit</button>
-                <br />
-                {submittedValues && `values: ${JSON.stringify(submittedValues)}`}
-                <br />
-                {submittedErrors && `errors: ${JSON.stringify(submittedErrors)}`}
-            </Form>
+            <div>
+                {
+                    inputFields.map(field => (
+                        <PBInput
+                            {...field}
+                            {...formFields[field.name]}
+                            key={field.name}
+                            onChange={value => this.handleChange(field.name, value)}
+                            onBlur={() => this.handleBlur(field.name)}
+                        />
+                    ))
+                }
+                <button onClick={this.handleSubmit}>Submit</button>
+            </div>
         );
     }
 }

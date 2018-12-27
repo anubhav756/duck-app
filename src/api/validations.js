@@ -1,2 +1,6 @@
-export const requireEmployer = employer =>
-    !employer.label ? 'Employer required' : null;
+export const required = value => {
+    debugger;
+    return !value;
+};
+
+export default null;
